@@ -10,7 +10,7 @@ namespace API.Data
 
             var products = new List<Product>
             {
-		new Product
+		        new Product
                 {
                     Name = "Angular Speedster Board 2000",
                     Description =
@@ -207,6 +207,13 @@ namespace API.Data
                     QuantityInStock = 100
                 },
             };
+
+            foreach(var product in products)
+            {
+                context.Products.Add(product);
+            }
+
+            context.SaveChanges();
         }
     }
 }
