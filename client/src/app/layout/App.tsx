@@ -6,6 +6,7 @@ import Header from './Header';
 function App() {
   const [darkMode, setDarkMode] = useState(false);
   const paletteType = darkMode ? 'dark' : 'light';
+  
   const theme = createTheme({
     palette: {
       mode: paletteType,
