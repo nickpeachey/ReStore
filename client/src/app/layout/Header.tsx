@@ -6,7 +6,7 @@ import { NavLink } from "react-router-dom";
 interface Props {
     darkMode: boolean;
     handleThemeChange: () => void;
-}8
+}
 
 const midLinks = [
     {title: 'catalog', path: '/catalog'},
