@@ -9,7 +9,7 @@ interface Props {
 export default function ProductCard ({product}: Props){
     return(
         <Card>
-            <CardHeader avatar={
+            <CardHeader component={Link} to={`/catalog/${product.id}`} avatar={
                 <Avatar sx={{bgcolor: 'secondary.main'}}>
                     {product.name.charAt(0).toUpperCase()}
                 </Avatar>
@@ -19,7 +19,7 @@ export default function ProductCard ({product}: Props){
                 sx: {fontWeight: 'bold', color: 'primary.main'}
             }}
             />
-            <CardMedia
+            <CardMedia component={Link} to={`/catalog/${product.id}`}
             sx={{height: 140, backgroundSize: 'contain', bgcolor: 'primary.light'}} 
             image={product.pictureUrl}
             title={product.name}
