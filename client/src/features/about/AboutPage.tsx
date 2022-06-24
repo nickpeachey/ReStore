@@ -11,7 +11,6 @@ export default function AboutPage() {
                 <Button variant='contained' onClick={() => agent.TestErrors.get404Error() }>Test 404 Error</Button>
                 <Button variant='contained' onClick={() => agent.TestErrors.get500Error() }>Test 500 Error</Button>
                 <Button variant='contained' onClick={() => agent.TestErrors.getValidationError() }>Test validation Error</Button>
-
             </ButtonGroup>
         </Container>
     )
