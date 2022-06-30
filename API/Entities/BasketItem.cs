@@ -1,5 +1,8 @@
+using System.ComponentModel.DataAnnotations.Schema;
+
 namespace API.Entities;
 
+[Table("BasketItems")]
 public class BasketItem
 {
     public int Id { get; set; }
