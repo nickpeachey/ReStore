@@ -1,10 +1,12 @@
 import axios, {AxiosError, AxiosResponse} from 'axios';
+import { request } from 'http';
 import { toast } from 'react-toastify';
 import { history } from '../..';
 
 const sleep = () => new Promise(resolve => setTimeout(resolve, 1000));
 
 axios.defaults.baseURL = 'http://localhost:5018/api/';
+axios.defaults.withCredentials = true;
 
 axios.interceptors.response.use(async response => {
     await sleep();
@@ -61,9 +63,16 @@ const TestErrors = {
     getValidationError: () => requests.get('buggy/validation-error')
 } 
 
+const Basket = {
+    get:() => requests.get('basket'),
+    addItem:(productId: number, quantity = 1) => requests.post(`basket?productId=${productId}&quantity=${quantity}`, {}),
+    removeItem:(productId: number, quantity = 1) => requests.delete(`basket?productId=${productId}&quantity=${quantity}`)
+}
+
 const agent = {
     Catalog,
-    TestErrors
+    TestErrors,
+    Basket
 }
 
 export default agent;
