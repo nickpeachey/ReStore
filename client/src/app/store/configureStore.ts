@@ -5,7 +5,6 @@ import { counterSlice } from "../../features/contact/counterSlice";
 
 export const store = configureStore({
     reducer: {
-        counter: counterSlice.reducer,
         basket: basketSlice.reducer
     }
 })

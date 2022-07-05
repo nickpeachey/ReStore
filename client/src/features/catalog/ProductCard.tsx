@@ -24,7 +24,7 @@ export default function ProductCard({ product }: Props) {
   const dispatch = useAppDispatch();
 
   function isInBasket(productId: number) {
-    return items?.find((p) => p.productId === productId) != undefined;
+    return items?.find((p) => p.productId === productId) !== undefined;
   }
 
   return (
