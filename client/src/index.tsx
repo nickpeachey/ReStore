@@ -11,8 +11,6 @@ import { fetchProductsAsync } from "./features/catalog/catalogSlice";
 
 export const history = createBrowserHistory();
 
-store.dispatch(fetchProductsAsync());
-
 const root = ReactDOM.createRoot(
   document.getElementById("root") as HTMLElement
 );
