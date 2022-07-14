@@ -7,22 +7,26 @@ const productsAdapter = createEntityAdapter<Product>();
 
 export const fetchProductsAsync = createAsyncThunk<Product[]> (
     'catalog/fetchProductsAsync',
-    async () => {
+    async (_, thunkAPI) => {
         try {
             return await agent.Catalog.list();
-        } catch(error) {
-            console.log(error);
+        } catch(error: any) {
+            return thunkAPI.rejectWithValue({
+                error: error.data
+            })
         }
     }
 )
 
 export const fetchProductAsync = createAsyncThunk<Product, number> (
     'catalog/fetchProductAsync',
-    async (productId) => {
+    async (productId, thunkAPI) => {
         try {
             return await agent.Catalog.details(productId)
-        } catch(error) {
-            console.log(error);
+        } catch(error: any) {
+            return thunkAPI.rejectWithValue({
+                error: error.data
+            })
         }
     }
 )
@@ -44,8 +48,9 @@ export const catalogSlice = createSlice({
             state.status = 'idle';
             state.productsLoaded = true;
         });
-        builder.addCase(fetchProductsAsync.rejected, (state) => {
+        builder.addCase(fetchProductsAsync.rejected, (state,action) => {
             state.status = 'idle';
+            console.log(action.payload)
         });
         builder.addCase(fetchProductAsync.pending, (state) => {
             state.status = 'pendingFetchProduct'
@@ -55,8 +60,9 @@ export const catalogSlice = createSlice({
             state.status = 'idle';
             state.productLoaded = true;
         });
-        builder.addCase(fetchProductAsync.rejected, (state) => {
+        builder.addCase(fetchProductAsync.rejected, (state, action) => {
             state.status = 'idle';
+            console.log(action)
         });
     })
 })
