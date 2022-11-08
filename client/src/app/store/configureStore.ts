@@ -7,7 +7,8 @@ import { counterSlice } from "../../features/contact/counterSlice";
 export const store = configureStore({
     reducer: {
         basket: basketSlice.reducer,
-        catalog: catalogSlice.reducer
+        catalog: catalogSlice.reducer,
+        counter: counterSlice.reducer
     }
 })
 
