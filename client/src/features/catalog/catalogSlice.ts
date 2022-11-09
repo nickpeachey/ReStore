@@ -3,13 +3,21 @@ import agent from "../../app/api/agent";
 import { Product } from "../../app/models/product";
 import { RootState } from "../../app/store/configureStore";
 
+interface CatalogState {
+    productsLoaded: boolean;
+    filtersLoaded: boolean;
+    productLoaded: boolean;
+    status: string;
+    brands: string[];
+    types: string[];
+  }
+
 const productsAdapter = createEntityAdapter<Product>();
 
 export const fetchProductsAsync = createAsyncThunk<Product[]> (
     'catalog/fetchProductsAsync',
     async (_, thunkAPI) => {
         try {
-            console.log(agent.Catalog.list());
             return await agent.Catalog.list();
         } catch(error: any) {
             return thunkAPI.rejectWithValue({
@@ -32,12 +40,26 @@ export const fetchProductAsync = createAsyncThunk<Product, number> (
     }
 )
 
+export const fetchFiltersAsync = createAsyncThunk(
+    "catalog/fetchFilters",
+    async (_, thunkAPI) => {
+      try {
+        return agent.Catalog.fetchFilters();
+      } catch (error: any) {
+        return thunkAPI.rejectWithValue({ error: error.data });
+      }
+    }
+  );
+
 export const catalogSlice = createSlice({
     name: 'catalog',
-    initialState: productsAdapter.getInitialState({
+    initialState: productsAdapter.getInitialState<CatalogState>({
         productsLoaded: false,
         productLoaded: false,
-        status: 'idle'
+        filtersLoaded: false,
+        status: 'idle',
+        brands:[],
+        types:[]
     }),
     reducers: {},
     extraReducers: (builder => {
@@ -51,7 +73,6 @@ export const catalogSlice = createSlice({
         });
         builder.addCase(fetchProductsAsync.rejected, (state,action) => {
             state.status = 'idle';
-            console.log(action.payload)
         });
         builder.addCase(fetchProductAsync.pending, (state) => {
             state.status = 'pendingFetchProduct'
@@ -63,7 +84,18 @@ export const catalogSlice = createSlice({
         });
         builder.addCase(fetchProductAsync.rejected, (state, action) => {
             state.status = 'idle';
-            console.log(action)
+        });
+        builder.addCase(fetchFiltersAsync.pending, (state) => {
+            state.status = 'pendingFetchFilters';
+        });
+        builder.addCase(fetchFiltersAsync.fulfilled, (state, action) => {
+            state.brands = action.payload.brands;
+            state.types = action.payload.types;
+            state.status = 'idle';
+            state.filtersLoaded = true;
+        });
+        builder.addCase(fetchFiltersAsync.rejected, (state, action) => {
+            state.status = 'idle';
         });
     })
 })
