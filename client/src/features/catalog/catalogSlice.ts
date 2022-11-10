@@ -51,9 +51,26 @@ export const fetchFiltersAsync = createAsyncThunk(
     }
   );
 
+//   initialState: productsAdapter.getInitialState({
+//     productsLoaded: false,
+//     productLoaded: false,
+//     status: 'idle'
+// })
+
+// export const catalogSlice = createSlice({
+//     name: 'catalog',
+//     initialState: productsAdapter.getInitialState<CatalogState>({
+//         productsLoaded: false,
+//         productLoaded: false,
+//         filtersLoaded: false,
+//         status: 'idle',
+//         brands:[],
+//         types:[]
+//     })
+
 export const catalogSlice = createSlice({
     name: 'catalog',
-    initialState: productsAdapter.getInitialState<CatalogState>({
+    initialState: productsAdapter.getInitialState({
         productsLoaded: false,
         productLoaded: false,
         filtersLoaded: false,
