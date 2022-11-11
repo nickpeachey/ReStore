@@ -1,18 +1,14 @@
 import {
   Box,
-  Checkbox,
-  FormControl,
-  FormControlLabel,
-  FormGroup,
   FormLabel,
   Grid,
   Pagination,
   Paper,
-  Radio,
-  RadioGroup,
   Typography,
 } from "@mui/material";
 import { useEffect } from "react";
+import AppPagination from "../../app/components/AppPagination";
+import CheckboxButtons from "../../app/components/CheckboxButtons";
 import RadioButtonGroup from "../../app/components/RadioButtonGroup";
 import LoadingComponent from "../../app/layout/LoadingComponent";
 import { useAppDispatch, useAppSelector } from "../../app/store/configureStore";
@@ -40,6 +36,7 @@ export default function Catalog() {
     brands,
     types,
     productParams,
+    metaData,
   } = useAppSelector((state) => state.catalog);
   const dispatch = useAppDispatch();
 
@@ -51,7 +48,7 @@ export default function Catalog() {
     if (!filtersLoaded) dispatch(fetchFiltersAsync());
   }, [dispatch, filtersLoaded]);
 
-  if (status.includes("pending")) return <LoadingComponent />;
+  if (status.includes("pending") || !metaData) return <LoadingComponent />;
 
   return (
     <>
@@ -72,27 +69,23 @@ export default function Catalog() {
           </Paper>
           <Paper sx={{ mb: 2, p: 2 }}>
             <FormLabel component="legend">Brands</FormLabel>
-            <FormGroup>
-              {brands.map((brand) => (
-                <FormControlLabel
-                  control={<Checkbox />}
-                  label={brand}
-                  key={brand}
-                />
-              ))}
-            </FormGroup>
+            <CheckboxButtons
+              items={brands}
+              checked={productParams.brands}
+              onChange={(items: string[]) =>
+                dispatch(setProductParams({ brands: items }))
+              }
+            />
           </Paper>
           <Paper sx={{ mb: 2, p: 2 }}>
             <FormLabel component="legend">Types</FormLabel>
-            <FormGroup>
-              {types.map((type) => (
-                <FormControlLabel
-                  control={<Checkbox />}
-                  label={type}
-                  key={type}
-                />
-              ))}
-            </FormGroup>
+            <CheckboxButtons
+              items={types}
+              checked={productParams.types}
+              onChange={(items: string[]) =>
+                dispatch(setProductParams({ types: items }))
+              }
+            />
           </Paper>
         </Grid>
         <Grid item xs={9}>
@@ -100,14 +93,12 @@ export default function Catalog() {
         </Grid>
         <Grid item xs={3} />
         <Grid item xs={9}>
-          <Box
-            display="flex"
-            justifyContent="space-between"
-            alignItems="center"
-          >
-            <Typography>Displaying 1-6 of 20 items</Typography>
-            <Pagination color="secondary" size="large" count={10} page={2} />
-          </Box>
+          <AppPagination
+            metaData={metaData}
+            onPageChange={(page: number) =>
+              dispatch(setProductParams({ pageNumber: page }))
+            }
+          />
         </Grid>
       </Grid>
     </>
