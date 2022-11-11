@@ -103,7 +103,7 @@ export const catalogSlice = createSlice({
             state.status = 'idle';
             state.productsLoaded = true;
         });
-        builder.addCase(fetchProductsAsync.rejected, (state,action) => {
+        builder.addCase(fetchProductsAsync.rejected, (state) => {
             state.status = 'idle';
         });
         builder.addCase(fetchProductAsync.pending, (state) => {
@@ -114,7 +114,7 @@ export const catalogSlice = createSlice({
             state.status = 'idle';
             state.productLoaded = true;
         });
-        builder.addCase(fetchProductAsync.rejected, (state, action) => {
+        builder.addCase(fetchProductAsync.rejected, (state) => {
             state.status = 'idle';
         });
         builder.addCase(fetchFiltersAsync.pending, (state) => {
