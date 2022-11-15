@@ -1,8 +1,8 @@
 export interface MetaData {
-    CurrentPage: number;
-    TotalPages: number;
-    PageSize: number;
-    TotalCount: number;
+    currentPage: number;
+    totalPages: number;
+    pageSize: number;
+    totalCount: number;
 }
 
 export class PaginatedResponse<T> {
