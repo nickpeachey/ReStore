@@ -24,8 +24,8 @@ function getAxiosParams(productParams: ProductParams) {
     params.append('orderBy', productParams.orderBy);
 
     if (productParams.searchTerm) params.append('searchTerm', productParams.searchTerm);
-    if (productParams.brands) params.append('brands', productParams.brands.toString());
-    if (productParams.types) params.append('types', productParams.types.toString());
+    if (productParams.brands?.length > 0) params.append('brands', productParams.brands.toString());
+    if (productParams.types?.length > 0) params.append('types', productParams.types.toString());
 
     return params;
 }
@@ -74,7 +74,9 @@ export const fetchFiltersAsync = createAsyncThunk(
     return {
         pageNumber: 1,
         pageSize: 6,
-        orderBy: 'name'
+        orderBy: 'name',
+        brands: [],
+        types: []
     }
   }
 
@@ -92,6 +94,10 @@ export const catalogSlice = createSlice({
     }),
     reducers: {
         setProductParams: (state, action) => {
+            state.productsLoaded = false;
+            state.productParams = {...state.productParams, ...action.payload, pageNumber: 1};
+        },
+        setPageNumber: (state, action) => {
             state.productsLoaded = false;
             state.productParams = {...state.productParams, ...action.payload};
         },
@@ -141,4 +147,4 @@ export const catalogSlice = createSlice({
 })
 
 export const productSelectors = productsAdapter.getSelectors((state: RootState) => state.catalog);
-export const {setProductParams, resetProductParams, setMetaData} = catalogSlice.actions;
+export const {setProductParams, resetProductParams, setMetaData, setPageNumber} = catalogSlice.actions;
