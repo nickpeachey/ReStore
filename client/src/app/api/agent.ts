@@ -3,6 +3,7 @@ import { request } from 'http';
 import { toast } from 'react-toastify';
 import { history } from '../..';
 import { PaginatedResponse } from '../models/pagination';
+import { store } from '../store/configureStore';
 
 const sleep = () => new Promise(resolve => setTimeout(resolve, 1000));
 
@@ -22,6 +23,7 @@ axios.interceptors.response.use(async response => {
     switch (status) {
         case 400:
             if (data.errors) {
+
                 const modelStateErrors: string[] = [];
                 for (const key in data.errors) {
                     if (data.errors[key]) {
@@ -33,7 +35,7 @@ axios.interceptors.response.use(async response => {
             toast.error(data.title);
             break;
         case 401:
-            toast.error(data.title);
+            toast.error(data.title || 'Unauthorised');
             break;
         case 500:
             history.push({
@@ -48,6 +50,13 @@ axios.interceptors.response.use(async response => {
 });
 
 const responseBody = (response: AxiosResponse) => response.data;
+
+axios.interceptors.request.use(config => {
+    const token = store.getState().account.user?.token;
+    if (token) config.headers = { 'Authorization': `Bearer ${token}` };
+    return config;
+})
+
 
 const requests = {
     get: (url: string, params?:URLSearchParams) => axios.get(url, {params}).then(responseBody),
