@@ -35,7 +35,7 @@ axios.interceptors.response.use(async response => {
             toast.error(data.title);
             break;
         case 401:
-            toast.error(data.title || 'Unauthorised');
+            toast.error(data.title);
             break;
         case 500:
             history.push({

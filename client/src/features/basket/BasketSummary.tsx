@@ -16,7 +16,11 @@ export default function BasketSummary() {
     0;
   const deliveryFee = subtotal > 10000 ? 0 : 500;
   return (
-    <TableContainer component={Paper} variant={"outlined"}>
+    <TableContainer
+      component={Paper}
+      variant={"outlined"}
+      sx={{ marginTop: 0.5, marginBottom: 0.5 }}
+    >
       <Table>
         <TableBody>
           <TableRow>
