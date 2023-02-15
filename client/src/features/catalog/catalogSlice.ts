@@ -1,9 +1,11 @@
+import { LocalizationProvider } from "@mui/lab";
 import { createAsyncThunk, createEntityAdapter, createSlice } from "@reduxjs/toolkit";
+import { act } from "@testing-library/react";
 import agent from "../../app/api/agent";
 import { MetaData } from "../../app/models/pagination";
 import { Product, ProductParams } from "../../app/models/product";
 import { RootState } from "../../app/store/configureStore";
-
+const querystring = require('querystring');
 interface CatalogState {
     productsLoaded: boolean;
     filtersLoaded: boolean;
@@ -26,9 +28,31 @@ function getAxiosParams(productParams: ProductParams) {
     if (productParams.searchTerm) params.append('searchTerm', productParams.searchTerm);
     if (productParams.brands?.length > 0) params.append('brands', productParams.brands.toString());
     if (productParams.types?.length > 0) params.append('types', productParams.types.toString());
-
     return params;
 }
+
+function setAxiosParams(queryString: string) {
+    return new URLSearchParams(queryString);
+}
+
+export const fetchProductsAsyncFromQuery = createAsyncThunk<Product[], string, {state:RootState}> (
+    'catalog/fetchProductsAsyncFromQuery',
+    async (query, thunkAPI) => {
+        const formedQuery = setAxiosParams(query);
+        try {
+            console.log(formedQuery);
+            const response = await agent.Catalog.list(formedQuery);
+            thunkAPI.dispatch(setMetaData(response.metaData));
+            thunkAPI.dispatch(setHistory(formedQuery.toString()));
+            console.log(response.items);
+            return response.items;
+        } catch(error: any) {
+            return thunkAPI.rejectWithValue({
+                error: error.data
+            })
+        }
+    }
+)
 
 export const fetchProductsAsync = createAsyncThunk<Product[], void, {state:RootState}> (
     'catalog/fetchProductsAsync',
@@ -38,6 +62,7 @@ export const fetchProductsAsync = createAsyncThunk<Product[], void, {state:RootS
         try {
             const response = await agent.Catalog.list(params);
             thunkAPI.dispatch(setMetaData(response.metaData));
+            thunkAPI.dispatch(setHistory(params.toString()));
             return response.items;
         } catch(error: any) {
             return thunkAPI.rejectWithValue({
@@ -107,10 +132,17 @@ export const catalogSlice = createSlice({
         },
         setMetaData: (state, action) => {
             state.metaData = action.payload;
+        },
+        setHistory: (state,action) => {
+            console.log(action.payload.toString());
+            window.history.replaceState([], "catalog", "/catalog?" + action.payload);
         }
     },
     extraReducers: (builder => {
         builder.addCase(fetchProductsAsync.pending, (state) => {
+            state.status = 'pendingFetchProducts'
+        });
+        builder.addCase(fetchProductsAsyncFromQuery.pending, (state) => {
             state.status = 'pendingFetchProducts'
         });
         builder.addCase(fetchProductsAsync.fulfilled, (state, action) => {
@@ -118,7 +150,16 @@ export const catalogSlice = createSlice({
             state.status = 'idle';
             state.productsLoaded = true;
         });
+
+        builder.addCase(fetchProductsAsyncFromQuery.fulfilled, (state, action) => {
+            productsAdapter.setAll(state, action.payload);
+            state.status = 'idle';
+            state.productsLoaded = true;
+        });
         builder.addCase(fetchProductsAsync.rejected, (state) => {
+            state.status = 'idle';
+        });
+        builder.addCase(fetchProductsAsyncFromQuery.rejected, (state) => {
             state.status = 'idle';
         });
         builder.addCase(fetchProductAsync.pending, (state) => {
@@ -148,4 +189,4 @@ export const catalogSlice = createSlice({
 })
 
 export const productSelectors = productsAdapter.getSelectors((state: RootState) => state.catalog);
-export const {setProductParams, resetProductParams, setMetaData, setPageNumber} = catalogSlice.actions;
+export const {setProductParams, resetProductParams, setMetaData, setPageNumber, setHistory} = catalogSlice.actions;

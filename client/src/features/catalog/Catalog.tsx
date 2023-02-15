@@ -1,5 +1,5 @@
 import { FormLabel, Grid, Paper } from "@mui/material";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import AppPagination from "../../app/components/AppPagination";
 import CheckboxButtons from "../../app/components/CheckboxButtons";
 import RadioButtonGroup from "../../app/components/RadioButtonGroup";
@@ -7,7 +7,9 @@ import LoadingComponent from "../../app/layout/LoadingComponent";
 import { useAppDispatch, useAppSelector } from "../../app/store/configureStore";
 import {
   fetchFiltersAsync,
+  fetchProductAsync,
   fetchProductsAsync,
+  fetchProductsAsyncFromQuery,
   productSelectors,
   setPageNumber,
   setProductParams,
@@ -32,6 +34,26 @@ export default function Catalog() {
     metaData,
   } = useAppSelector((state) => state.catalog);
   const dispatch = useAppDispatch();
+  const [pageLoaded,setPageLoaded] = useState(false);
+
+  useEffect(() => {
+    if (window.location.search && !pageLoaded) {
+      setPageLoaded(true);
+      dispatch(fetchProductsAsyncFromQuery(window.location.search));
+      return;
+    }
+
+  },[window.location.search])
+
+  // useEffect(() => {
+  //   if (window.location.search) {
+  //     console.log("something in the query");
+  //     dispatch(fetchProductsAsyncFromQuery(window.location.search));
+  //     return;
+  //   } else {
+  //     console.log("nothing carrying on");
+  //   }
+  // },[]);
 
   useEffect(() => {
     if (!productsLoaded) dispatch(fetchProductsAsync());
